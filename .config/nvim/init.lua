@@ -69,6 +69,12 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
 
+  {
+    "supermaven-inc/supermaven-nvim",
+    config = function()
+      require("supermaven-nvim").setup({})
+    end,
+  },
   -- Git related plugins
   {
     "kdheepak/lazygit.nvim",
@@ -218,20 +224,6 @@ require('lazy').setup({
   },
 
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
-    lazy = false,
-    config = function()
-      require('onedark').setup {
-        -- Set a style preset. 'dark' is default.
-        style = 'dark', -- dark, darker, cool, deep, warm, warmer, light
-      }
-      require('onedark').load()
-    end,
-  },
-
-  {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
@@ -242,8 +234,98 @@ require('lazy').setup({
         component_separators = '|',
         section_separators = '',
       },
+      sections = {
+        lualine_a = {'mode'},
+        lualine_b = {'branch', 'diff', 'diagnostics'},
+        lualine_c = {
+          {
+            'filename',
+            file_status = true,      -- Displays file status (readonly status, modified status)
+            newfile_status = false,  -- Display new file status (new file means no write after created)
+            path = 1,
+            -- 0: Just the filename
+            -- 1: Relative path
+            -- 2: Absolute path
+            -- 3: Absolute path, with tilde as the home directory
+            -- 4: Filename and parent dir, with tilde as the home directory
+
+            shorting_target = 60,
+            -- Shortens path to leave 40 spaces in the window
+            -- for other components. (terrible name, any suggestions?)
+            symbols = {
+              modified = '[+]',      -- Text to show when the file is modified.
+              readonly = '[-]',      -- Text to show when the file is non-modifiable or readonly.
+              unnamed = '[No Name]', -- Text to show for unnamed buffers.
+              newfile = '[New]',     -- Text to show for newly created file before first write
+            }
+          }
+        },
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = {'location'}
+      },
     },
   },
+
+  {
+    "Mofiqul/dracula.nvim", name = "dracula",
+    config = function()
+      local dracula = require("dracula")
+      dracula.setup({
+        -- customize dracula color palette
+        colors = {
+          bg = "#282A36",
+          fg = "#F8F8F2",
+          selection = "#44475A",
+          comment = "#6272A4",
+          red = "#FF5555",
+          orange = "#FFB86C",
+          yellow = "#F1FA8C",
+          green = "#50fa7b",
+          purple = "#BD93F9",
+          cyan = "#8BE9FD",
+          pink = "#FF79C6",
+          bright_red = "#FF6E6E",
+          bright_green = "#69FF94",
+          bright_yellow = "#FFFFA5",
+          bright_blue = "#D6ACFF",
+          bright_magenta = "#FF92DF",
+          bright_cyan = "#A4FFFF",
+          bright_white = "#FFFFFF",
+          menu = "#21222C",
+          visual = "#3E4452",
+          gutter_fg = "#4B5263",
+          nontext = "#3B4048",
+          white = "#ABB2BF",
+          black = "#191A21",
+        },
+        -- show the '~' characters after the end of buffers
+        show_end_of_buffer = false, -- default false
+        -- use transparent background
+        transparent_bg = false, -- default false
+        -- set custom lualine background color
+        lualine_bg_color = "#44475a", -- default nil
+        -- set italic comment
+        italic_comment = true, -- default false
+        -- overrides the default highlights with table see `:h synIDattr`
+        overrides = {},
+        -- You can use overrides as table like this
+        -- overrides = {
+          --   NonText = { fg = "white" }, -- set NonText fg to white
+          --   NvimTreeIndentMarker = { link = "NonText" }, -- link to NonText highlight
+          --   Nothing = {} -- clear highlight of Nothing
+          -- },
+          -- Or you can also use it like a function to get color from theme
+          -- overrides = function (colors)
+            --   return {
+              --     NonText = { fg = colors.white }, -- set NonText fg to white of theme
+              --   }
+              -- end,
+})
+      vim.cmd("colorscheme dracula")
+    end,
+  },
+
 
   { 'm4xshen/autoclose.nvim', opts = {} },
 
@@ -690,24 +772,24 @@ cmp.setup {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_locally_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
+    -- ['<Tab>'] = cmp.mapping(function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_next_item()
+    --   elseif luasnip.expand_or_locally_jumpable() then
+    --     luasnip.expand_or_jump()
+    --   else
+    --     fallback()
+    --   end
+    -- end, { 'i', 's' }),
+    -- ['<S-Tab>'] = cmp.mapping(function(fallback)
+    --   if cmp.visible() then
+    --     cmp.select_prev_item()
+    --   elseif luasnip.locally_jumpable(-1) then
+    --     luasnip.jump(-1)
+    --   else
+    --     fallback()
+    --   end
+    -- end, { 'i', 's' }),
   },
   sources = {
     { name = 'nvim_lsp' },
@@ -715,6 +797,7 @@ cmp.setup {
     { name = 'path' },
   },
 }
+
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
