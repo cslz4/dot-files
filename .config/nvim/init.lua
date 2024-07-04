@@ -124,7 +124,12 @@ require('lazy').setup({
     },
   },
 
-  { 'SidOfc/carbon.nvim' },
+  {
+    'stevearc/oil.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+  },
 
   {
     "ThePrimeagen/harpoon",
@@ -538,7 +543,7 @@ vim.api.nvim_set_keymap(
 )
 
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>pv', ":Carbon!<CR>:lua require('cmp').setup.buffer { enabled = false }<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
@@ -576,7 +581,7 @@ vim.keymap.set("n", "<leader>gg", ':LazyGit<CR>')
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'kotlin' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -644,6 +649,11 @@ vim.defer_fn(function()
   }
 end, 0)
 
+require("oil").setup()
+
+-- Setup neovim lua configuration
+require('neodev').setup()
+
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
@@ -683,15 +693,9 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
-
 local servers = {
-  -- clangd = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
-
+  tsserver = {},
+  kotlin_language_server = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -702,13 +706,6 @@ local servers = {
   },
 }
 
-require('carbon').setup(function(settings)
-  settings.setting = 'value'
-end)
-
--- Setup neovim lua configuration
-require('neodev').setup()
-
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
@@ -718,33 +715,19 @@ local mason_lspconfig = require 'mason-lspconfig'
 
 mason.setup()
 mason_lspconfig.setup {
-  on_attach = on_attach,
   ensure_installed = vim.tbl_keys(servers),
 }
 
-local lspconfig = require("lspconfig")
-local handlers = {
-  function (server_name) -- default handler (optional)
-    lspconfig[server_name].setup {}
-  end,
-  ["tsserver"] = function()
-    lspconfig.tsserver.setup{
-      on_attach = on_attach
+mason_lspconfig.setup_handlers({
+  function (server_name)
+    require('lspconfig')[server_name].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = servers[server_name],
+      filetypes = (servers[server_name] or {}).filetypes,
     }
   end,
-  ["eslint"] = function ()
-    lspconfig.eslint.setup({
-      on_attach = function(_, bufnr)
-        vim.api.nvim_create_autocmd("BufWritePre", {
-          buffer = bufnr,
-          command = "EslintFixAll",
-        })
-      end,
-    })
-  end,
-}
-
-mason_lspconfig.setup_handlers(handlers)
+})
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
