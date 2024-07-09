@@ -3,6 +3,10 @@ set idearefactormode=keep
 set ideajoin
 set surround
 set easymotion
+set ignorecase
+set smartcase
+set hlsearch
+set clipboard=unnamedplus
 
 let mapleader = " "
 
@@ -25,22 +29,27 @@ nmap <leader>P "*P
 vmap <leader>p "*p
 vmap <leader>P "*P
 
-" scrolling
-nmap <leader>d <C-d>
-nmap <leader>u <C-u>
-vmap <leader>d <C-d>
-vmap <leader>u <C-u>
-
 " actions
-nmap <leader>h <action>(PreviousTab)
-nmap <leader>l <action>(NextTab)
-nmap <leader>bd <action>(CloseEditor)
-nmap <leader>i <action>(Generate)
-nmap <leader>m <action>(Git.Menu)
-nmap <leader>s <action>(QuickChangeScheme)
-nmap <leader>/ <action>(ShowErrorDescription)
-nmap <leader>e <action>(GotoNextError)
-nnoremap <leader><leader> <C-Tab>
+nmap ]d <action>(GotoNextError)
+nmap [d <action>(GotoPreviousError)
+nmap gr <action>(FindUsages)
+nmap <leader>sf <action>(GotoFile)
+nmap <leader>sg <action>(FindInPath)
+nmap <leader>sr <action>(FindUsages)
+nmap <leader>sa <action>(GotoAction)
+nmap <leader>st <action>(GotoTest)
+nmap <leader>rn <action>(RenameElement)
+
+" moving lines
+vmap J :m '>+1<CR>gv=gv
+vmap K :m '>-2<CR>gv=gv
+
+" scrolling
+nmap <C-u> <C-u>zz
+nmap <C-d> <C-d>zz
+nmap n nzzzv
+nmap N Nzzzv
+imap <C-c> <Esc>
 
 set NERDTree
 let g:NERDTreeMapActivateNode='l'
