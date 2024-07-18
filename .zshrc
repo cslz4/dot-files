@@ -90,6 +90,14 @@ source $ZSH/oh-my-zsh.sh
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
+#
+#################   ANDROID PATHS   #################
+export ANDROID_HOME=/Users/carlos.sluzala/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+#################   SETUP JENV   #################
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
 
 export EDITOR='nvim'
 
@@ -110,6 +118,12 @@ export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
 
 export JAVA_HOME=$(/usr/libexec/java_home)
 
+export PATH="$HOME/.rvm/gems/ruby-3.0.0/bin:$HOME/.rvm/bin:$PATH"
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
