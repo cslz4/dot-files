@@ -1,4 +1,3 @@
-set number relativenumber
 set idearefactormode=keep
 set ideajoin
 set surround
@@ -7,6 +6,7 @@ set ignorecase
 set smartcase
 set hlsearch
 set clipboard=unnamedplus
+set relativenumber
 
 let mapleader = " "
 

@@ -116,8 +116,6 @@ alias vim="nvim"
 
 export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
 
-export JAVA_HOME=$(/usr/libexec/java_home)
-
 export PATH="$HOME/.rvm/gems/ruby-3.0.0/bin:$HOME/.rvm/bin:$PATH"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
