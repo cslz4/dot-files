@@ -1,5 +1,4 @@
 --[[
-
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -71,80 +70,77 @@ vim.opt.rtp:prepend(lazypath)
 --  You can also configure plugins after the setup call,
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
-  -- NOTE: First, some plugins that don't require any configuration
-
   -- AI related plugins
   {
-    "yetone/avante.nvim",
-    event = "VeryLazy",
-    lazy = false,
-    version = false, -- set this if you want to always pull the latest change
-    opts = {
-      provider = "claude", -- Only recommend using Claude
-      auto_suggestions_provider = "claude",
-      -- Used for counting tokens and encoding text.
-      -- By default, we will use tiktoken.
-      -- For most providers that we support we will determine this automatically.
-      -- If you wish to use a given implementation, then you can override it here.
-      tokenizer = "tiktoken",
-      -- Default system prompt. Users can override this with their own prompt
-      -- You can use `require('avante.config').override({system_prompt = "MY_SYSTEM_PROMPT"}) conditionally
-      -- in your own autocmds to do it per directory, or that fit your needs.
-      system_prompt = [[
-You are an excellent programming expert.
-]],
-      claude = {
-        endpoint = "https://api.anthropic.com",
-        model = "claude-3-5-sonnet-20240620",
-        timeout = 30000, -- Timeout in milliseconds
-        temperature = 0,
-        max_tokens = 8000,
-        ["local"] = false,
-      },
-    },
-    -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-    build = "make",
-    -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+    "luckasRanarison/tailwind-tools.nvim",
+    name = "tailwind-tools",
+    build = ":UpdateRemotePlugins",
     dependencies = {
-      "stevearc/dressing.nvim",
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      --- The below dependencies are optional,
-      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-      "zbirenbaum/copilot.lua", -- for providers='copilot'
-      {
-        -- support for image pasting
-        "HakonHarnes/img-clip.nvim",
-        event = "VeryLazy",
-        opts = {
-          -- recommended settings
-          default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-              insert_mode = true,
-            },
-            -- required for Windows users
-            use_absolute_path = true,
-          },
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-telescope/telescope.nvim", -- optional
+      "neovim/nvim-lspconfig", -- optional
+    },
+    opts = {} -- your configuration
+  },
+  {
+    "github/copilot.vim"
+  },
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    dependencies = {
+      { "github/copilot.vim" },
+      { "nvim-lua/plenary.nvim", branch = "master" },
+    },
+    build = "make tiktoken",
+    opts = {
+      question_header = "## Me ",
+      answer_header = "## Copilot ",
+      error_header = "## Error ",
+      mappings = {
+        complete = {
+          detail = "Use @<Tab> or /<Tab> for options.",
+          insert = "",
         },
-      },
-      {
-        -- Make sure to set this up properly if you have lazy=true
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = {
-          file_types = { "markdown", "Avante" },
+        close = {
+          normal = "q",
+          insert = "<C-q>",
         },
-        ft = { "markdown", "Avante" },
+        reset = {
+          normal = "<C-x>",
+          insert = "<C-x>",
+        },
+        submit_prompt = {
+          normal = "<CR>",
+          insert = "<C-CR>",
+        },
+        accept_diff = {
+          normal = "<C-y>",
+          insert = "<C-y>",
+        },
+        show_help = {
+          normal = "g?",
+        },
+        show_diff = {
+          full_diff = true
+        }
       },
     },
+    keys = {
+      { "<leader>zc", ":CopilotChat<CR>",         mode = "n", desc = "Open Copilot Chat" },
+      { "<leader>ze", ":CopilotChatExplain<CR>",  mode = "v", desc = "Explain Code" },
+      { "<leader>zr", ":CopilotChatReview<CR>",   mode = "v", desc = "Review Code" },
+      { "<leader>zf", ":CopilotChatFix<CR>",      mode = "v", desc = "Fix Code Issues" },
+      { "<leader>zo", ":CopilotChatOptimize<CR>", mode = "v", desc = "Optimize Code" },
+      { "<leader>zd", ":CopilotChatDocs<CR>",     mode = "v", desc = "Generate Docs" },
+      { "<leader>zt", ":CopilotChatTests<CR>",    mode = "v", desc = "Generate Tests" },
+      { "<leader>zm", ":CopilotChatCommit<CR>",   mode = "n", desc = "Generate Commit Message" },
+      { "<leader>zs", ":CopilotChatCommit<CR>",   mode = "v", desc = "Open Copilot Chat" },
+    },
+    config = function(_, opts)
+      local chat = require("CopilotChat")
+      chat.setup(opts)
+    end
   },
-  -- {
-  --   "supermaven-inc/supermaven-nvim",
-  --   config = function()
-  --     require("supermaven-nvim").setup({})
-  --   end,
-  -- },
   -- Git related plugins
   {
     "kdheepak/lazygit.nvim",
@@ -170,7 +166,7 @@ You are an excellent programming expert.
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim',       opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -211,7 +207,7 @@ You are an excellent programming expert.
       local harpoon = require("harpoon")
 
       harpoon:setup()
-      vim.keymap.set("n", "<leader>a", function() harpoon:list():append() end)
+      vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
       vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
 
       vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
@@ -231,7 +227,7 @@ You are an excellent programming expert.
     config = function()
       require('ufo').setup({
         provider_selector = function(bufnr, filetype, buftype)
-          return {'treesitter', 'indent'}
+          return { 'treesitter', 'indent' }
         end
       })
     end,
@@ -324,13 +320,13 @@ You are an excellent programming expert.
         section_separators = '',
       },
       sections = {
-        lualine_a = {'mode'},
-        lualine_b = {'branch', 'diff', 'diagnostics'},
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch', 'diff', 'diagnostics' },
         lualine_c = {
           {
             'filename',
-            file_status = true,      -- Displays file status (readonly status, modified status)
-            newfile_status = false,  -- Display new file status (new file means no write after created)
+            file_status = true,     -- Displays file status (readonly status, modified status)
+            newfile_status = false, -- Display new file status (new file means no write after created)
             path = 1,
             -- 0: Just the filename
             -- 1: Relative path
@@ -351,13 +347,14 @@ You are an excellent programming expert.
         },
         lualine_x = {},
         lualine_y = {},
-        lualine_z = {'location'}
+        lualine_z = { 'location' }
       },
     },
   },
 
   {
-    "navarasu/onedark.nvim", name = "onedark",
+    "navarasu/onedark.nvim",
+    name = "onedark",
     config = function()
       require('onedark').setup {
         style = 'darker'
@@ -370,7 +367,7 @@ You are an excellent programming expert.
   { 'm4xshen/autoclose.nvim', opts = {} },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',  opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -406,7 +403,6 @@ You are an excellent programming expert.
     },
     build = ':TSUpdate',
   },
-
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -491,7 +487,7 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 
 -- Ufo related
 vim.o.foldcolumn = '1' -- '0' is not bad
-vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.o.foldlevel = 99   -- Using ufo provider need a large value, feel free to decrease the value
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
@@ -687,7 +683,7 @@ vim.defer_fn(function()
       swap = {
         enable = true,
         swap_next = {
-        ['<leader>i'] = '@parameter.inner',
+          ['<leader>i'] = '@parameter.inner',
         },
         swap_previous = {
           ['<leader>A'] = '@parameter.inner',
@@ -921,11 +917,38 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
+local util = require('lspconfig.util')
+
+local root_patterns = {
+  eslint = { '.eslintrc', '.eslintrc.js', '.eslintrc.json', '.eslintrc.yaml', '.eslintrc.yml', 'package.json' },
+  ts_ls = { 'tsconfig.json', 'jsconfig.json', 'package.json' },
+  tailwindcss = { 'tailwind.config.js', 'tailwind.config.ts', 'postcss.config.js', 'package.json' },
+}
+
+local function get_root_dir(patterns)
+  return function(fname)
+    local root = util.root_pattern(unpack(patterns))(fname)
+    -- If no root found with patterns, try git
+    if not root then
+      root = util.find_git_ancestor(fname)
+    end
+    return root
+  end
+end
+
 local servers = {
-  eslint = {},
-  tailwindcss = {},
-  tsserver = {},
-  kotlin_language_server = {},
+  eslint = {
+    root_dir = get_root_dir(root_patterns.eslint),
+    settings = {
+      workingDirectory = { mode = "auto" }
+    },
+  },
+  ts_ls = {
+    root_dir = get_root_dir(root_patterns.ts_ls),
+  },
+  tailwindcss = {
+    root_dir = get_root_dir(root_patterns.tailwindcss),
+  },
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -949,22 +972,44 @@ mason_lspconfig.setup {
 }
 
 mason_lspconfig.setup_handlers({
-  function (server_name)
+  function(server_name)
     if server_name == 'eslint' then
       require('lspconfig')[server_name].setup {
         on_attach = function(client, bufnr)
+          -- Only attach the autocommand if the ESLint server is working
           vim.api.nvim_create_autocmd("BufWritePre", {
             buffer = bufnr,
-            command = "EslintFixAll",
+            callback = function()
+              -- Check if the ESLint server is attached and running
+              if client.active then
+                vim.cmd('EslintFixAll')
+              end
+            end,
           })
         end,
+        root_dir = servers.eslint.root_dir,
+        settings = servers.eslint.settings,
+        -- Add flags to help with initialization
+        flags = {
+          debounce_text_changes = 150,
+        },
+        -- Handle initialization failure
+        on_init = function(client)
+          client.config.settings = vim.tbl_deep_extend(
+            'force',
+            client.config.settings or {},
+            servers.eslint.settings
+          )
+          return true
+        end
       }
     else
       require('lspconfig')[server_name].setup {
         capabilities = capabilities,
         on_attach = on_attach,
-        settings = servers[server_name],
+        settings = servers[server_name] and servers[server_name].settings,
         filetypes = (servers[server_name] or {}).filetypes,
+        root_dir = servers[server_name] and servers[server_name].root_dir,
       }
     end
   end,
@@ -1016,9 +1061,9 @@ cmp.setup {
     -- end, { 'i', 's' }),
   },
   sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-    { name = 'path' },
+    { name = 'nvim_lsp', group_index = 2 },
+    { name = 'luasnip',  group_index = 2 },
+    { name = 'path',     group_index = 2 },
   },
 }
 

@@ -7,6 +7,7 @@ set smartcase
 set hlsearch
 set clipboard=unnamedplus
 set relativenumber
+set textobjects
 
 let mapleader = " "
 
@@ -39,6 +40,7 @@ nmap <leader>sr <action>(FindUsages)
 nmap <leader>sa <action>(GotoAction)
 nmap <leader>st <action>(GotoTest)
 nmap <leader>rn <action>(RenameElement)
+nmap <leader>t <action>(ActivateTerminalToolWindow)
 
 " moving lines
 vmap J :m '>+1<CR>gv=gv
@@ -54,3 +56,4 @@ imap <C-c> <Esc>
 set NERDTree
 let g:NERDTreeMapActivateNode='l'
 let g:NERDTreeMapJumpParent='h'
+map <leader>e :NERDTreeFocus<CR>
