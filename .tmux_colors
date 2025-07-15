@@ -1,0 +1,33 @@
+##### Terminal Settings #####
+# Ensure tmux uses 256 colors
+set-option -g default-terminal "screen-256color"
+
+# For newer terminals that support true color, consider:
+# set-option -g default-terminal "tmux-256color"
+# or:
+# set-option -as terminal-overrides ",xterm-256color:Tc"
+
+##### Status Bar #####
+set-option -g status-bg colour8
+set-option -g status-fg colour7
+
+##### Window Titles #####
+# Inactive windows
+setw -g window-status-style "fg=colour250,bg=default,dim"
+
+# Active window
+setw -g window-status-current-style "fg=colour8,bg=colour7,bold"
+
+##### Pane Borders #####
+set-option -g pane-border-style "fg=colour8"
+set-option -g pane-active-border-style "fg=colour250"
+
+##### Messages (e.g., prompts) #####
+set-option -g message-style "fg=colour245,bg=colour235"
+
+##### Copy/Selection Mode #####
+setw -g mode-style "fg=colour7,bg=colour8"
+
+##### Left panel #####
+set-option -g status-left-length 100
+set-option -g status-left "#[fg=colour7,bg=colour8] #(basename #{pane_current_path}) #[default]"
