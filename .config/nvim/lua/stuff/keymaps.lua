@@ -1,5 +1,13 @@
+local g = vim.g
 local keymap = vim.keymap
 local opts = { noremap = true, silent = true }
+
+-- Global options 
+g.mapleader = " "
+
+-- Buffer
+keymap.set("n", "<Leader>bd", ":bd<Return>", opts)
+keymap.set("n", "<Leader>qq", ":qa!<Return>", opts)
 
 -- Do things without affecting the registers
 keymap.set("n", "x", '"_x')
@@ -60,16 +68,22 @@ keymap.set("n", "<C-j>", function()
 end, opts)
 
 keymap.set("n", "<leader>r", function()
-	require("cslz4.hsl").replaceHexWithHSL()
+	require("stuff.hsl").replaceHexWithHSL()
 end)
 
 keymap.set("n", "<leader>i", function()
-	require("cslz4.lsp").toggleInlayHints()
+	require("stuff.lsp").toggleInlayHints()
 end)
 
 vim.api.nvim_create_user_command("ToggleAutoformat", function()
-	require("cslz4.lsp").toggleAutoformat()
+	require("stuff.lsp").toggleAutoformat()
 end, {})
 
 -- Refactor
-vim.keymap.set("n", "<leader>rn", ":IncRename ")
+keymap.set("n", "<leader>rn", ":IncRename ")
+
+-- Explorer
+keymap.set("n", "<leader>pv", vim.cmd.Ex)
+
+-- LSP
+keymap.set('n', 'gd', vim.lsp.buf.definition, {})
